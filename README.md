@@ -91,6 +91,18 @@ Invoke-RestMethod http://localhost:5000/api/health
 The current backend only exposes this health check; product, auth, order, and
 seed endpoints still need to be implemented.
 
+Run only one backend server per port. If startup reports that port 5000 is
+already in use, reuse the running API or stop the existing backend before
+starting another. To run a second instance on a different port in PowerShell:
+
+```powershell
+$env:PORT = "5001"
+npm run dev
+```
+
+If you change the backend port, update `VITE_API_BASE_URL` in
+`frontend/.env` to match.
+
 ### 2. Configure and run the frontend
 
 In a second terminal, from the repository root:
