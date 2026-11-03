@@ -45,11 +45,20 @@ app.use(errorHandler);
 const start = async () => {
   try {
     await connectDB();
-    app.listen(port, () => {
-      console.log(`IronNest API listening on http://localhost:${port}`);
+    await new Promise((resolve, reject) => {
+      const server = app.listen(port);
+      server.once('listening', () => {
+        console.log(`IronNest API listening on http://localhost:${port}`);
+        resolve();
+      });
+      server.once('error', reject);
     });
   } catch (error) {
-    console.error('Failed to start server:', error.message);
+    if (error.code === 'EADDRINUSE') {
+      console.error(`Port ${port} is already in use. Stop the existing server or set PORT to another available port.`);
+    } else {
+      console.error('Failed to start server:', error.message);
+    }
     process.exit(1);
   }
 };
